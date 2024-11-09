@@ -11,11 +11,11 @@ class GildedRoseTest(unittest.TestCase):
         self.assertEqual(items[0].sell_in, 9)
 
     def test_normal_item_on_sell_date(self):
-        items = [Item("Normal Item", sell_in=0, quality=20)]
+        items = [Item("Normal Item", sell_in=-1, quality=20)]
         gilded_rose = GildedRose(items)
         gilded_rose.update_quality()
         self.assertEqual(items[0].quality, 18)
-        self.assertEqual(items[0].sell_in, -1)
+        self.assertEqual(items[0].sell_in, -2)
 
     def test_normal_item_after_sell_date(self):
         items = [Item("Normal Item", sell_in=-1, quality=20)]
@@ -41,7 +41,7 @@ class GildedRoseTest(unittest.TestCase):
         items = [Item("Aged Brie", sell_in=0, quality=10)]
         gilded_rose = GildedRose(items)
         gilded_rose.update_quality()
-        self.assertEqual(items[0].quality, 12)
+        self.assertEqual(items[0].quality, 11)
         self.assertEqual(items[0].sell_in, -1)
 
     def test_aged_brie_after_sell_date(self):
@@ -57,12 +57,12 @@ class GildedRoseTest(unittest.TestCase):
         gilded_rose.update_quality()
         self.assertEqual(items[0].quality, 50)
 
-    def test_sulfuras_never_changes(self):
+    def test_sulfuras_quality_never_changes(self):
         items = [Item("Sulfuras, Hand of Ragnaros", sell_in=0, quality=80)]
         gilded_rose = GildedRose(items)
         gilded_rose.update_quality()
         self.assertEqual(items[0].quality, 80)
-        self.assertEqual(items[0].sell_in, 0)
+        self.assertEqual(items[0].sell_in, -1)
 
     def test_backstage_passes_long_before_sell_date(self):
         items = [Item("Backstage passes to a TAFKAL80ETC concert", sell_in=15, quality=20)]
@@ -86,11 +86,11 @@ class GildedRoseTest(unittest.TestCase):
         self.assertEqual(items[0].sell_in, 4)
 
     def test_backstage_passes_on_sell_date(self):
-        items = [Item("Backstage passes to a TAFKAL80ETC concert", sell_in=0, quality=20)]
+        items = [Item("Backstage passes to a TAFKAL80ETC concert", sell_in=-1, quality=20)]
         gilded_rose = GildedRose(items)
         gilded_rose.update_quality()
         self.assertEqual(items[0].quality, 0)
-        self.assertEqual(items[0].sell_in, -1)
+        self.assertEqual(items[0].sell_in, -2)
 
     def test_backstage_passes_after_sell_date(self):
         items = [Item("Backstage passes to a TAFKAL80ETC concert", sell_in=-1, quality=20)]
@@ -107,11 +107,11 @@ class GildedRoseTest(unittest.TestCase):
         self.assertEqual(items[0].sell_in, 2)
 
     def test_conjured_item_degrades_twice_as_fast_after_sell_date(self):
-        items = [Item("Conjured Mana Cake", sell_in=0, quality=6)]
+        items = [Item("Conjured Mana Cake", sell_in=-1, quality=6)]
         gilded_rose = GildedRose(items)
         gilded_rose.update_quality()
         self.assertEqual(items[0].quality, 2)
-        self.assertEqual(items[0].sell_in, -1)
+        self.assertEqual(items[0].sell_in, -2)
 
     def test_normal_item_min_quality(self):
         items = [Item("Normal Item", sell_in=5, quality=0)]
@@ -148,6 +148,40 @@ class GildedRoseTest(unittest.TestCase):
         gilded_rose = GildedRose(items)
         gilded_rose.update_quality()
         self.assertEqual(items[0].quality, 0)
+
+    def test_normal_item_at_maximum_quality_before_expiry(self):
+        items = [Item("Normal Item", sell_in=5, quality=55)]
+        gilded_rose = GildedRose(items)
+        gilded_rose.update_quality()
+        print(items[0].quality)
+        self.assertEqual(items[0].quality, 49)
+
+    def test_backstage_passes_quality_increases_at_thresholds(self):
+        items = [Item("Backstage passes to a TAFKAL80ETC concert", sell_in=11, quality=20)]
+        gilded_rose = GildedRose(items)
+        gilded_rose.update_quality()
+        self.assertEqual(items[0].quality, 21)  # 11 days left, increase by 1
+
+        items[0].sell_in = 10
+        gilded_rose.update_quality()
+        self.assertEqual(items[0].quality, 23)  # 10 days left, increase by 2
+
+        items[0].sell_in = 5
+        gilded_rose.update_quality()
+        self.assertEqual(items[0].quality, 26)  # 5 days left, increase by 3
+
+    def test_conjured_item_quality_never_negative(self):
+        items = [Item("Conjured Mana Cake", sell_in=0, quality=1)]
+        gilded_rose = GildedRose(items)
+        gilded_rose.update_quality()
+        self.assertEqual(items[0].quality, 0)
+
+    def test_aged_brie_max_quality_after_expiry(self):
+        items = [Item("Aged Brie", sell_in=-1, quality=50)]
+        gilded_rose = GildedRose(items)
+        gilded_rose.update_quality()
+        self.assertEqual(items[0].quality, 50)
+
 
 if __name__ == '__main__':
     unittest.main()

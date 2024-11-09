@@ -13,11 +13,14 @@ class GildedRose:
 
             # handle no op items
             if self.is_legendary_item(item):
+                item.sell_in -= 1
                 continue
 
-            # one day has passed
-            item.sell_in = item.sell_in - 1
             is_expired = item.sell_in < 0
+
+            # this is run twice, once to ensure the incoming item is within the quality bounds so we can safely update it
+            # and once after doing an update to make sure we didn't go out of bounds
+            self.enforce_quality_limits(item)
 
             if self.is_appreciating_item(item):
                 self.update_appreciating_item_quality(item, is_expired)
@@ -32,6 +35,10 @@ class GildedRose:
                     item.quality -= quality_decay
 
             self.enforce_quality_limits(item)
+
+            # one day has passed
+            item.sell_in = item.sell_in - 1
+            
 
     def is_appreciating_item(self, item) -> bool:
         APPRECIATING_ITEMS = ["Aged Brie", "Backstage passes to a TAFKAL80ETC concert"]
@@ -61,8 +68,12 @@ class GildedRose:
         elif item.sell_in < 6:
             item.quality += 3
         elif item.sell_in < 11:
+            print('in 2')
+            print(item.quality)
+            print(item.sell_in)
             item.quality += 2
         else:
+            print('in 1')
             #NOTE: this isn't explicit in the instructions, but I believe it's the correct behavior
             item.quality += self.default_quality_change_rate
 
