@@ -1,0 +1,7 @@
+*.pyc
+.cache
+.coverage
+.idea/
+*.iml
+venv/
+__pycache__/
