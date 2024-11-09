@@ -73,7 +73,6 @@ class GildedRose:
         if item.quality > self.normal_quality_max:
             item.quality = self.normal_quality_max
 
-##### DO NOT MODIFY BELOW THIS LINE #####
 
 class Item:
     def __init__(self, name, sell_in, quality):
