@@ -29,6 +29,8 @@ A comprehensive test suite verifies the behavior of each item type under various
 
 Much of the work to make things like item lists easily configurable have been done.  Instead of a hardcoded list to check, it could be moved to the class init so full lists can be passed in.  Since we moved the checks to their own function, adjustments like that would be very minimal.  Instead of hardcoding some values, like the quality limits, we've made them default values within the init (in case a conjuring goes wrong and can only be half as high quality).
 
+Another change that should be explored when revisted is error handling and logging.  Right now there is none since it was a bit out of the scope of this project, but best practices would have some logging and gracefully handling errors.  Some validation, like items starting with qualities out of normal bounds, could have unique handling that might involve throwing an error or at least logging out for further tracking.
+
 ## Instructions
 
 To run the tests, simply execute the following:

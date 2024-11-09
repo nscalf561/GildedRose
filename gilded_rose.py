@@ -38,7 +38,7 @@ class GildedRose:
 
             # one day has passed
             item.sell_in = item.sell_in - 1
-            
+            return
 
     def is_appreciating_item(self, item) -> bool:
         APPRECIATING_ITEMS = ["Aged Brie", "Backstage passes to a TAFKAL80ETC concert"]
@@ -61,6 +61,7 @@ class GildedRose:
                 item.quality += self.default_quality_change_rate * 2
             else:
                 item.quality += self.default_quality_change_rate
+        return
 
     def update_backstage_passes_quality(self, item, expired) -> None:
         if expired:
@@ -68,14 +69,11 @@ class GildedRose:
         elif item.sell_in < 6:
             item.quality += 3
         elif item.sell_in < 11:
-            print('in 2')
-            print(item.quality)
-            print(item.sell_in)
             item.quality += 2
         else:
-            print('in 1')
             #NOTE: this isn't explicit in the instructions, but I believe it's the correct behavior
             item.quality += self.default_quality_change_rate
+        return
 
     def enforce_quality_limits(self, item) -> None:
         """ If above or below quality limits, set to the limit """
@@ -83,6 +81,7 @@ class GildedRose:
             item.quality = self.normal_quality_min
         if item.quality > self.normal_quality_max:
             item.quality = self.normal_quality_max
+        return
 
 
 class Item:
